@@ -21,6 +21,7 @@ python train.py --no_graph                 # ablation: same model, edges removed
 python oracle.py                           # supervoxel ceiling
 python baselines.py                        # RandomForest + SVM
 python report.py best_gnn.pt               # metrics, plots, worst scans -> report_out/
+python curves.py                           # val curves + train/val gap from saved weights (no retraining)
 ```
 Demo (Windows): double-click `run_demo.bat`, or
 `C:\Python314\python.exe -m streamlit run app.py` (same Python that has torch/nibabel).
@@ -50,4 +51,5 @@ contain training logs, metrics/plots and demo scans. Educational project, not a 
 - Protani et al., *Decoder-Free Supervoxel GNN for Accurate Brain-Tumor Localization* (arXiv 2601.14055)
 - Antonelli et al., *The Medical Segmentation Decathlon* (dataset)
 
-Educational project, not a medical device.
+Code was developed with AI assistance; all critical components were reviewed and understood
+(see `evaluation_sheet.md`). Educational project, not a medical device.
