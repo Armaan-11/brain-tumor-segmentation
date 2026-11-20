@@ -11,7 +11,7 @@ def load():
     m = Net(); m.load_state_dict(torch.load("best_gnn.pt")); return m
 
 
-@st.cache_data(show_spinner="Supervoxel graph ban raha hai (~1 min)...")  # cache: slider hilane pe dobara SLIC na chale
+@st.cache_data(show_spinner="Supervoxel is making graph (~1 min)...")  # cache: slider hilane pe dobara SLIC na chale
 def run(raw: bytes):
     p = os.path.join(tempfile.mkdtemp(), "scan.nii.gz")             # temp file (nibabel ko path chahiye)
     open(p, "wb").write(raw)                                        # upload ke bytes likho
@@ -30,7 +30,7 @@ st.sidebar.markdown("**Model:** best_gnn.pt (GATv2, seed 0)  \n"
                     "**Oracle ceiling:** 0.756")
 f = st.file_uploader("MRI: 4-modality .nii.gz (MSD Task01 format)", type=["gz"])
 samples = sorted(glob.glob("data/samples/*.nii.gz"))                # demo ke liye ready test scans
-pick = st.selectbox("Ya koi sample test scan chuno", ["(none)"] + [os.path.basename(s) for s in samples])
+pick = st.selectbox("Choose a sample test image", ["(none)"] + [os.path.basename(s) for s in samples])
 if f:
     raw, label = f.getvalue(), f.name
 elif pick != "(none)":
@@ -54,4 +54,4 @@ if raw is not None:
             ax.contour(seg.T.astype(float), levels=[0.5], colors=col)
     st.pyplot(fig)
     buf = io.BytesIO(); fig.savefig(buf, format="png", dpi=150)     # screenshot/backup ke liye
-    st.download_button("Overlay PNG save karo", buf.getvalue(), file_name="overlay.png", mime="image/png")
+    st.download_button("Save Overlay", buf.getvalue(), file_name="overlay.png", mime="image/png")
