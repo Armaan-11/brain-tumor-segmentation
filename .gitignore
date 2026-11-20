@@ -1,0 +1,19 @@
+# Raw dataset (7 GB tar + 4.4 GB extracted) - download separately
+Task01_BrainTumour.tar
+Task01_BrainTumour/
+
+# Extra graphs from the stopped 484-case prep (not used in results)
+graphs_extra/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Streamlit / OS
+.streamlit/
+.DS_Store
+Thumbs.db
+*.tmp
