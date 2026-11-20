@@ -14,18 +14,35 @@ tar -xf Task01_BrainTumour.tar
 ## Run
 ```
 pip install -r requirements.txt
-python test_smoke.py                       # 1. sanity check, no dataset needed
-python prep.py Task01_BrainTumour 150      # 2. build graphs (~16 s/case on 1 CPU core)
-python train.py                            # 3. GNN
-python train.py --no_graph                 # 4. ablation: same model without edges
-streamlit run app.py                       # 5. demo (upload a 4-channel .nii.gz)
+python test_smoke.py                       # sanity check, no dataset needed
+python prep.py Task01_BrainTumour 150      # build graphs (150 of 484 cases used)
+python train.py                            # GNN
+python train.py --no_graph                 # ablation: same model, edges removed
+python oracle.py                           # supervoxel ceiling
+python baselines.py                        # RandomForest + SVM
+python report.py best_gnn.pt               # metrics, plots, worst scans -> report_out/
 ```
+Demo (Windows): double-click `run_demo.bat`, or
+`C:\Python314\python.exe -m streamlit run app.py` (same Python that has torch/nibabel).
+Then pick a sample scan in the dropdown, move the slice slider, save the overlay PNG.
 
-## Results (fill in after your run)
-| Model | Dice WT | Dice TC | Dice ET | Volume MAE (cm³) |
-|---|---|---|---|---|
-| No graph (ablation) | | | | |
-| Supervoxel GATv2 | | | | |
+## Results
+150 MSD cases, patient-level 70/15/15 split (~23 test scans).
+Three seeds; values are mean ± std over seeds (seed 0 checkpoint used by the demo).
+
+| Model | Dice WT | Dice TC | Dice ET | Mean Dice | Vol MAE WT/TC/ET (cm³) |
+|---|---|---|---|---|---|
+| No graph (MLP) | 0.740 ± 0.027 | 0.613 ± 0.058 | 0.522 ± 0.079 | 0.625 ± 0.054 | 22.1 / 13.0 / 4.8 |
+| Supervoxel GATv2 | **0.805 ± 0.027** | **0.669 ± 0.067** | **0.589 ± 0.031** | **0.688 ± 0.038** | **15.9 / 12.1 / 5.2** |
+| RandomForest (seed 0) | 0.730 | 0.515 | 0.475 | 0.573 | 23.0 / 12.0 / 4.2 |
+| SVM-RBF SVR (seed 0, 20k nodes) | 0.711 | 0.477 | 0.404 | 0.531 | 28.2 / 27.8 / 24.8 |
+| Oracle ceiling (seed 0) | 0.859 | 0.775 | 0.634 | 0.756 | — |
+
+Graph improves mean Dice by **+0.063 ± 0.022**, positive in all 3 paired seeds.
+Oracle analysis: WT is near the supervoxel ceiling; TC has the largest learnable gap;
+ET is inherently limited by the supervoxel partition. Full 484-case training and
+external validation are future work. `logs/`, `report_out/` and `data/samples/`
+contain training logs, metrics/plots and demo scans. Educational project, not a medical device.
 
 ## Related work
 - Saueressig et al., *Exploring Graph-Based Neural Networks for Automatic Brain Tumor Segmentation* (BraTS 2019)
